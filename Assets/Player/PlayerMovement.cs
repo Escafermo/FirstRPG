@@ -1,11 +1,12 @@
 using System;
 using UnityEngine;
 using UnityStandardAssets.Characters.ThirdPerson;
+using UnityStandardAssets.CrossPlatformInput;
 
 [RequireComponent(typeof (ThirdPersonCharacter))]
 public class PlayerMovement : MonoBehaviour
 {
-    ThirdPersonCharacter m_Character;   // A reference to the ThirdPersonCharacter on the object
+    ThirdPersonCharacter thirdPersonPlayer;   // A reference to the ThirdPersonCharacter on the object
     CameraRaycaster cameraRaycaster;
     Vector3 currentClickTarget;
 
@@ -16,7 +17,7 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         cameraRaycaster = Camera.main.GetComponent<CameraRaycaster>();
-        m_Character = GetComponent<ThirdPersonCharacter>();
+        thirdPersonPlayer = GetComponent<ThirdPersonCharacter>();
         currentClickTarget = transform.position;
     }
 
@@ -25,10 +26,11 @@ public class PlayerMovement : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.G)) // Press G to change between mouse and gamepad. TODO: Allow player to remap this key
         {
+            currentClickTarget = transform.position; // Clear the last set ClickTarget
             isInDirectMode = !isInDirectMode; // Toggle
         }
 
-        if (isInDirectMode)
+        if (!isInDirectMode)
         {
             ProcessDirectMovement();
         }
@@ -45,40 +47,40 @@ public class PlayerMovement : MonoBehaviour
             //print("Cursor raycast hit" + cameraRaycaster.hit.collider.gameObject.name.ToString());
             //print("Cursor layer  hit" + cameraRaycaster.layerHit);
 
-            switch (cameraRaycaster.layerHit)
+            switch (cameraRaycaster.currentLayerHitMethod)
             {
                 case Layer.Walkable:
                     currentClickTarget = cameraRaycaster.hit.point;  // So not set in default case
                     break;
                 case Layer.Enemy:
-                    print("Not moving to enemy");
+                    //print("Not moving to enemy");
                     break;
                 default:
-                    print("Error on layer - can't walk there!");
+                    //print("Error on layer - can't walk there!");
                     return;
             }
         }
         var playerToClickPoint = currentClickTarget - transform.position;
         if (playerToClickPoint.magnitude >= walkMoveStopRadius)
         {
-            m_Character.Move(playerToClickPoint, false, false);
+            thirdPersonPlayer.Move(playerToClickPoint, false, false);
         }
         else
         {
-            m_Character.Move(Vector3.zero, false, false);
+            thirdPersonPlayer.Move(Vector3.zero, false, false);
         }
     }
 
     private void ProcessDirectMovement ()
     {
-        float h = Input.GetAxis("Horizontal"); // Could be CROSSPLATFORM
-        float v = Input.GetAxis("Vertical");
+        float h = CrossPlatformInputManager.GetAxis("Horizontal"); // Could be CROSSPLATFORM
+        float v = CrossPlatformInputManager.GetAxis("Vertical");
 
         // calculate camera relative direction to move:
-        Vector3 m_CamForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
-        Vector3 m_Move = v * m_CamForward + h * Camera.main.transform.right;
+        Vector3 cameraForward = Vector3.Scale(Camera.main.transform.forward, new Vector3(1, 0, 1)).normalized;
+        Vector3 moveVector = v * cameraForward + h * Camera.main.transform.right;
 
-        m_Character.Move(m_Move, false, false);
+        thirdPersonPlayer.Move(moveVector, false, false);
     }
 }
 

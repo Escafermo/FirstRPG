@@ -2,6 +2,8 @@
 
 public class CameraRaycaster : MonoBehaviour
 {
+    //( TODO : consider de-registering OnLayerChange on leaving all game scenes
+
     public Layer[] layerPriorities = {
         Layer.Enemy,
         Layer.Walkable
@@ -10,40 +12,49 @@ public class CameraRaycaster : MonoBehaviour
     [SerializeField] float distanceToBackground = 100f;
     Camera viewCamera;
 
-    RaycastHit m_hit;
+    RaycastHit raycastHit;
     public RaycastHit hit
     {
-        get { return m_hit; }
+        get { return raycastHit; }
     }
 
-    Layer m_layerHit;
-    public Layer layerHit
+    Layer layerHit;
+    public Layer currentLayerHitMethod
     {
-        get { return m_layerHit; }
+        get { return layerHit; }
     }
 
-    void Start() // TODO Awake?
+    public delegate void OnLayerChange(Layer newLayer); // Declare new delegate type 
+    public event OnLayerChange onLayerChange; /*Instantiate an observer SET or POOL or LIST and declares it as an EVENT type 
+                                                    (from the outside of this script its only possible to register or de-register from it, not change it completely )*/
+    void Start() 
     {
         viewCamera = Camera.main;
+
     }
 
     void Update()
     {
         // Look for and return priority layer hit
-        foreach (Layer layer in layerPriorities)
+        foreach (Layer currentLayer in layerPriorities)
         {
-            var hit = RaycastForLayer(layer);
+            var hit = RaycastForLayer(currentLayer);
             if (hit.HasValue)
             {
-                m_hit = hit.Value;
-                m_layerHit = layer;
+                raycastHit = hit.Value;
+                if (layerHit != currentLayer) //If layer has changed
+                {
+                    layerHit = currentLayer; 
+                    onLayerChange(currentLayer); // Call the delegates, since layerChangeObservers is a POINTER to functions
+                }
+                layerHit = currentLayer; // If layer has changed
                 return;
             }
         }
 
         // Otherwise return background hit
-        m_hit.distance = distanceToBackground;
-        m_layerHit = Layer.RaycastEndStop;
+        raycastHit.distance = distanceToBackground;
+        layerHit = Layer.RaycastEndStop;
     }
 
     RaycastHit? RaycastForLayer(Layer layer)
