@@ -16,7 +16,7 @@ public class CameraFollow : MonoBehaviour {
         //currentOffset = new Vector3(0, 0, 0);
         offset = new Vector3(0, -6, -6);
     }
-    
+
     void LateUpdate ()
     {
         AdjustCameraPosition();
@@ -71,4 +71,18 @@ public class CameraFollow : MonoBehaviour {
         }
         transform.position = player.transform.position + offset;
     }
+
+    #region TESTING camera rotation with Q and E
+    //public void AdjustCameraRotation()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.Q))
+    //    {
+    //        transform.Rotate(new Vector3(0, 45f, 0));
+    //    }
+    //    if (Input.GetKeyDown(KeyCode.E))
+    //    {
+    //        transform.Rotate(new Vector3(0, -45f, 0));
+    //    }
+    //}
+    #endregion
 }

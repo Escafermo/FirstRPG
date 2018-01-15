@@ -8,9 +8,10 @@ public class PlayerMovement : MonoBehaviour
 {
     ThirdPersonCharacter thirdPersonPlayer;   // A reference to the ThirdPersonCharacter on the object
     CameraRaycaster cameraRaycaster;
-    Vector3 currentClickTarget;
+    Vector3 currentClickDestination, clickPoint;
 
-    [SerializeField] float walkMoveStopRadius = 0.2f;
+    [SerializeField] float walkMoveStopRadius = 0.5f;
+    [SerializeField] float attackMoveStopRadius = 3f;
 
     private bool isInDirectMode = false; // Direct mode = keyboard or gamepad | Indirect mode = mouse
 
@@ -18,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
     {
         cameraRaycaster = Camera.main.GetComponent<CameraRaycaster>();
         thirdPersonPlayer = GetComponent<ThirdPersonCharacter>();
-        currentClickTarget = transform.position;
+        currentClickDestination = transform.position;
     }
 
     // Fixed update is called in sync with physics
@@ -26,11 +27,11 @@ public class PlayerMovement : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.G)) // Press G to change between mouse and gamepad. TODO: Allow player to remap this key
         {
-            currentClickTarget = transform.position; // Clear the last set ClickTarget
+            currentClickDestination = transform.position; // Clear the last set ClickTarget
             isInDirectMode = !isInDirectMode; // Toggle
         }
 
-        if (!isInDirectMode)
+        if (isInDirectMode)
         {
             ProcessDirectMovement();
         }
@@ -44,24 +45,27 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            //print("Cursor raycast hit" + cameraRaycaster.hit.collider.gameObject.name.ToString());
-            //print("Cursor layer  hit" + cameraRaycaster.layerHit);
-
+            clickPoint = cameraRaycaster.hit.point;
             switch (cameraRaycaster.currentLayerHitMethod)
             {
                 case Layer.Walkable:
-                    currentClickTarget = cameraRaycaster.hit.point;  // So not set in default case
+                    currentClickDestination = ShortenDistance(clickPoint, walkMoveStopRadius); //Shortens the Vector to avoid spinning and bugs
                     break;
                 case Layer.Enemy:
-                    //print("Not moving to enemy");
+                    currentClickDestination = ShortenDistance(clickPoint, attackMoveStopRadius);
                     break;
                 default:
                     //print("Error on layer - can't walk there!");
                     return;
             }
         }
-        var playerToClickPoint = currentClickTarget - transform.position;
-        if (playerToClickPoint.magnitude >= walkMoveStopRadius)
+        WalkToDestinationRange();
+    }
+
+    private void WalkToDestinationRange()
+    {
+        var playerToClickPoint = currentClickDestination - transform.position;
+        if (playerToClickPoint.magnitude >= 0)
         {
             thirdPersonPlayer.Move(playerToClickPoint, false, false);
         }
@@ -81,6 +85,25 @@ public class PlayerMovement : MonoBehaviour
         Vector3 moveVector = v * cameraForward + h * Camera.main.transform.right;
 
         thirdPersonPlayer.Move(moveVector, false, false);
+    }
+
+    Vector3 ShortenDistance (Vector3 destination, float shorteningRange) // Shortens the destination click point by the shortening range
+    {
+        Vector3 reductionVector = (destination - transform.position).normalized * shorteningRange;
+        return destination - reductionVector;
+    }
+
+    private void OnDrawGizmos()
+    {
+        //Draw move gizmos
+        Gizmos.color = Color.black;
+        Gizmos.DrawLine(transform.position, currentClickDestination); // Get a line from current position to the click target
+        Gizmos.DrawSphere(currentClickDestination, 0.1f);
+        Gizmos.DrawSphere(clickPoint, 0.15f);
+
+        //Draw attack gizmos
+        Gizmos.color = new Color(0f, 0f, 255f, 0.5f);
+        Gizmos.DrawWireSphere(transform.position, attackMoveStopRadius);
     }
 }
 
