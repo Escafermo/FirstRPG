@@ -21,6 +21,8 @@ public class CameraFollow : MonoBehaviour {
     {
         AdjustCameraPosition();
 
+        AdjustCameraRotation();
+
         #region TESTING ScrollWheel as camera zoom
         //Attempt to make SCROLL WHEEL work as camera zoom ( TODO , has bug when walking)
         //var thisOffset = Input.GetAxis("Mouse ScrollWheel");
@@ -73,16 +75,16 @@ public class CameraFollow : MonoBehaviour {
     }
 
     #region TESTING camera rotation with Q and E
-    //public void AdjustCameraRotation()
-    //{
-    //    if (Input.GetKeyDown(KeyCode.Q))
-    //    {
-    //        transform.Rotate(new Vector3(0, 45f, 0));
-    //    }
-    //    if (Input.GetKeyDown(KeyCode.E))
-    //    {
-    //        transform.Rotate(new Vector3(0, -45f, 0));
-    //    }
-    //}
+    public void AdjustCameraRotation()
+    {
+        if (Input.GetKey(KeyCode.Q))
+        {
+            transform.Rotate(new Vector3(0, 1f, 0));
+        }
+        if (Input.GetKey(KeyCode.E))
+        {
+            transform.Rotate(new Vector3(0, -1f, 0));
+        }
+    }
     #endregion
 }
