@@ -8,20 +8,21 @@ public class CameraFollow : MonoBehaviour {
     private GameObject player;
     private Vector3 offset;
     private float currentViewValue = 2f;
+    private Vector3 privotPoint;
     //private Vector3 currentOffset;
 
     void Start ()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         //currentOffset = new Vector3(0, 0, 0);
-        offset = new Vector3(0, -6, -6);
+        offset = new Vector3(0, 12, 12);
     }
 
     void LateUpdate ()
     {
         AdjustCameraPosition();
 
-        AdjustCameraRotation();
+        //AdjustCameraRotation();
 
         #region TESTING ScrollWheel as camera zoom
         //Attempt to make SCROLL WHEEL work as camera zoom ( TODO , has bug when walking)
@@ -57,17 +58,17 @@ public class CameraFollow : MonoBehaviour {
         {
             if (currentViewValue % 2f == 0f)
             {
-                offset = new Vector3(0, -9, -9);
+                offset = new Vector3(0, -3, -3);
                 currentViewValue += 1f;
             }
             else if (currentViewValue % 3f == 0f)
             {
-                offset = Vector3.zero;
+                offset = new Vector3(0, +3, +3);
                 currentViewValue -= 2f;
             }
             else
             {
-                offset = new Vector3(0, -6, -6);
+                offset = Vector3.zero;
                 currentViewValue += 1f;
             }
         }
@@ -79,11 +80,11 @@ public class CameraFollow : MonoBehaviour {
     {
         if (Input.GetKey(KeyCode.Q))
         {
-            transform.Rotate(new Vector3(0, 1f, 0));
+            transform.Rotate(new Vector3(0, 2f, 0));
         }
         if (Input.GetKey(KeyCode.E))
         {
-            transform.Rotate(new Vector3(0, -1f, 0));
+            transform.Rotate(new Vector3(0, -2f, 0));
         }
     }
     #endregion
