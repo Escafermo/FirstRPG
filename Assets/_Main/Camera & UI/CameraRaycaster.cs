@@ -9,7 +9,7 @@ public class CameraRaycaster : MonoBehaviour
 	[SerializeField] int[] layerPriorities;
     //[SerializeField] string stringToPrint = "aa";
 
-    float maxRaycastDepth = 100f; // Hard coded value
+    float maxRaycastDepth = 1000f; // Hard coded value
 	int topPriorityLayerLastFrame = -1; // So get ? from start with Default layer terrain
 
 	// Setup delegates for broadcasting layer changes to other classes
