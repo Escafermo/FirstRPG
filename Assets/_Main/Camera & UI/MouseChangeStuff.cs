@@ -17,13 +17,11 @@ public class MouseChangeStuff : MonoBehaviour
     float rotationXAxis = 0.0f;
     float velocityX = 0.0f;
     float velocityY = 0.0f;
-    private Vector3 offset;
     private float currentViewValue = 2f;
 
     // Use this for initialization
     void Start()
     {
-        offset = new Vector3(0, 6, 6);
         Vector3 angles = transform.eulerAngles;
         rotationYAxis = angles.y;
         rotationXAxis = angles.x;
@@ -37,7 +35,7 @@ public class MouseChangeStuff : MonoBehaviour
     {
         if (target)
         {
-            if (Input.GetMouseButton(2))
+            if (Input.GetMouseButton(1))
             {
                 velocityX += xSpeed * Input.GetAxis("Mouse X") * distance * 0.02f;
                 velocityY += ySpeed * Input.GetAxis("Mouse Y") * 0.02f;
