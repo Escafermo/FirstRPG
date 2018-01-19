@@ -18,10 +18,17 @@ public class MouseChangeStuff : MonoBehaviour
     float velocityX = 0.0f;
     float velocityY = 0.0f;
     private float currentViewValue = 2f;
+    private Vector3 localCameraPosition;
+
+    [SerializeField] float yZoomInMax;
+    [SerializeField] float yZoomOutMax;
+    [SerializeField] float translationValue;
 
     // Use this for initialization
     void Start()
     {
+        localCameraPosition = new Vector3(0, 12f, 12f);
+
         Vector3 angles = transform.eulerAngles;
         rotationYAxis = angles.y;
         rotationXAxis = angles.x;
@@ -63,6 +70,23 @@ public class MouseChangeStuff : MonoBehaviour
 
             transform.position = target.transform.position;
         }
+
+        // Handles zooming:
+        Vector3 zoomOut = new Vector3(0, translationValue, translationValue);
+        Vector3 zoomIn = new Vector3(0, -translationValue, -translationValue);
+        transform.GetComponentInChildren<Camera>().transform.localPosition = localCameraPosition;
+
+        //Zoom out
+        if (Input.GetAxis("Mouse ScrollWheel") < 0  && localCameraPosition.y < yZoomOutMax)
+        {
+            localCameraPosition += zoomOut;
+        }
+        //Zoom in
+        if (Input.GetAxis("Mouse ScrollWheel") > 0 && localCameraPosition.y > yZoomInMax)
+        {
+            localCameraPosition += zoomIn;
+        }
+
     }
     public static float ClampAngle(float angle, float min, float max)
     {

@@ -5,6 +5,11 @@ using System.Collections.Generic;
 
 public class CameraRaycaster : MonoBehaviour
 {
+
+
+
+
+
 	// INSPECTOR PROPERTIES RENDERED BY CUSTOM EDITOR SCRIPT
 	[SerializeField] int[] layerPriorities;
     //[SerializeField] string stringToPrint = "aa";
@@ -22,8 +27,12 @@ public class CameraRaycaster : MonoBehaviour
 
     void Update()
 	{
-		// Check if pointer is over an interactable UI element
-		if (EventSystem.current.IsPointerOverGameObject ())
+        
+
+
+
+        // Check if pointer is over an interactable UI element
+        if (EventSystem.current.IsPointerOverGameObject ())
 		{
 			NotifyObserersIfLayerChanged (5);
 			return; // Stop looking for other objects
