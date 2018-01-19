@@ -27,7 +27,7 @@ public class MouseChangeStuff : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        localCameraPosition = new Vector3(0, 12f, 12f);
+        localCameraPosition = new Vector3(0, 7f, 7f);
 
         Vector3 angles = transform.eulerAngles;
         rotationYAxis = angles.y;

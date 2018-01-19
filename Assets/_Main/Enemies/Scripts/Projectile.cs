@@ -16,7 +16,8 @@ public class Projectile : MonoBehaviour {
     private void OnTriggerEnter(Collider collider)
     {
         Component damageableComponent = collider.gameObject.GetComponent(typeof(IDamageable));
-        if (damageableComponent)
+        
+        if (damageableComponent && damageableComponent.gameObject.tag == "Player")
         {
             (damageableComponent as IDamageable).TakeDamage(damageCaused);
         }
